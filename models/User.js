@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+const ImageSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  imageURL: {
+    type: String,
+    required: true
+  }
+});
+
+
 const UserSchema = new mongoose.Schema({
   userName: {
     type: String,
@@ -15,7 +27,7 @@ const UserSchema = new mongoose.Schema({
     required: true
   },
   images: {
-    type: [String], // Array of image URLs or file paths
+    type: [ImageSchema], // Array of image URLs or file paths
     default: []
   },
   date: {
@@ -24,10 +36,17 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.methods.addImage = function(imageURL) {
-  this.images.push(imageURL);
-  // You can perform additional logic or validation here if needed
-  return this.save();
+UserSchema.methods.addImage = async function (name, imageURL) {
+  const image = {
+    name: name,
+    imageURL: imageURL
+  };
+
+  this.images.push(image);
+  await this.save(); // Save the user after modifying the images array
+  return this; // Return the updated user object
 };
+
+
  
 module.exports = mongoose.model('User', UserSchema);

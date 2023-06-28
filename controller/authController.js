@@ -63,10 +63,11 @@ const registerController = (req, res, next) => {
       });
   }
 
+ 
   const addImageToUser = async (req, res) => {
     try {
-      const userId = req.params.id; // Access the user ID from the request parameters
-      const imageURL = req.body.imageURL; // Access the imageURL from the request body
+      const userId = req.params.id;
+      const { name, imageURL } = req.body;
   
       const user = await User.findById(userId);
   
@@ -74,8 +75,8 @@ const registerController = (req, res, next) => {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      // Add the image URL to the user's images array
-      user.addImage(imageURL);
+      user.addImage(name, imageURL);
+      await user.save();
   
       res.json(user); // Return the updated user object
     } catch (error) {
